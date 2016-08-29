@@ -10,13 +10,13 @@ namespace schedule
 		public static void Main(string[] args)
 		{
 			// Название нашей таблицы с расписанием.
-			string filePath = @"test2.xlsx";
+			string filePath = @"rasp5sem.xlsx";
 
 			// Парсим xlsx-таблицу
 			List<WorkDay> week = ParseExcelSchedule.Parse(filePath);
 
 			// Задаем дату начала семестра.
-			iCalDateTime startStudy = new iCalDateTime(2015, 9, 1);
+			iCalDateTime startStudy = new iCalDateTime(2016, 2, 8);
 				
 			// Создаём календарь, в который будем сохранять матчи.
 			iCalendar CalForSchedule = new iCalendar
@@ -52,7 +52,10 @@ namespace schedule
 					// Плюсуем к временной дате (номер недели - 1, т.к. чтобы перейти
 					// к первой неделе не нужно плюсовать неделю) * 7 дней) и
 					// приводим к локальной временной зоне.
-					iCalDateTime StartClass = new iCalDateTime(tmpDate.AddDays((number - 1) * 7).Local);
+					//
+					// FIXME
+					// Для второго семестра приходится минусовать 24 недели
+					iCalDateTime StartClass = new iCalDateTime(tmpDate.AddDays((number - 1 - 23) * 7).Local);
 					
 					// Если неделя первая (подразумевается, что она не полная)
 					// и день занятий раньше для начала учебы, тогда не записываем его.
@@ -97,7 +100,7 @@ namespace schedule
 
 			// Сериализуем наш календарь.
 			iCalendarSerializer serializer = new iCalendarSerializer();
-			serializer.Serialize(CalForSchedule, "Расписание.ics");
+			serializer.Serialize(CalForSchedule, "Расписание_ДКО_132Б_5сем.ics");
 			Console.WriteLine("Календарь расписания сохранён успешно" + Environment.NewLine);
 		}
 

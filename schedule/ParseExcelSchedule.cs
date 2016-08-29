@@ -43,14 +43,14 @@ namespace schedule
 					// Если есть название дня, если есть пара и это не "Самостоятельная работа",
 					// тогда обрабатываем это занятие.
 					if (GetIntNumberFromDayWeek(sheet.Cells[i,1].Text) != 0 &&
-					    sheet.Cells[i,3].Text != "Самостоятельная работа" &&
-					    !(string.IsNullOrWhiteSpace(sheet.Cells[i,3].Text)))
+					    sheet.Cells[i,16].Text != "Самостоятельная работа" &&
+					    !(string.IsNullOrWhiteSpace(sheet.Cells[i,16].Text)))
 					{
 						WorkDay tmp = new WorkDay();
 
 						// Если мы сменили день, значит это первая пара за этот день.
 						if (GetIntNumberFromDayWeek(sheet.Cells[i,1].Text) != presentDay
-						    || (i != 1 && sheet.Cells[i,2].Text == sheet.Cells[i - 1,2].Text))
+						    || (i != 1 && sheet.Cells[i,6].Text == sheet.Cells[i - 1,6].Text))
 						{
 							presentDay = GetIntNumberFromDayWeek(sheet.Cells[i,1].Text);
 							tmp.isFirstClassesOfADay = true;
@@ -61,25 +61,25 @@ namespace schedule
 
 						// Разбиваем время на две строки (начало и конец пары),
 						// чтобы в дальнейшем было удобней использовать.
-						tmp.timeClassStart = TimeSpan.Parse(sheet.Cells[i,2].Text.Split('-')[0].Replace('.', ':'));
-						tmp.timeClassEnd = TimeSpan.Parse(sheet.Cells[i,2].Text.Split('-')[1].Replace('.', ':'));
+						tmp.timeClassStart = TimeSpan.Parse(sheet.Cells[i,6].Text.Split('-')[0].Replace('.', ':'));
+						tmp.timeClassEnd = TimeSpan.Parse(sheet.Cells[i,6].Text.Split('-')[1].Replace('.', ':'));
 
 						// Выделяем из столбца названия предмета ТОЛЬКО название,
 						// отсекая цифру 2 (для предметов, идущих второй семестр),
 						// и отсекая имя преподавателя.
-						if (Regex.IsMatch(sheet.Cells[i,3].Text, @"\("))
-							tmp.nameSubject = sheet.Cells[i,3].Text.
-								Substring(0, Regex.Match(sheet.Cells[i,3].Text, @"\(").Index);
+						if (Regex.IsMatch(sheet.Cells[i,16].Text, @"\("))
+							tmp.nameSubject = sheet.Cells[i,16].Text.
+								Substring(0, Regex.Match(sheet.Cells[i,16].Text, @"\(").Index);
 						else
-							tmp.nameSubject = sheet.Cells[i,3].Text;
+							tmp.nameSubject = sheet.Cells[i,16].Text;
 
 						//Находим в названии предмета имя преподавателя и убираем оттуда скобки 
-						tmp.nameLecturer = Regex.Match(sheet.Cells[i,3].Text, @"\([^0-9]+\)").
+						tmp.nameLecturer = Regex.Match(sheet.Cells[i,16].Text, @"\([^0-9]+\)").
 							ToString().Replace("(", "").Replace(")", "");
-						tmp.typeClass = (sheet.Cells[i,8].Text == "л") ? "Лекция" : "Семинар";
+						tmp.typeClass = (sheet.Cells[i,53].Text == "л") ? "Лекция" : "Семинар";
 
 						// Разбиваем строку на целые значения - номера недель.
-						string repeatAt = sheet.Cells[i,9].Text;
+						string repeatAt = sheet.Cells[i,57].Text;
 						foreach (string weekNumber in repeatAt.Split(','))
 						{
 							if (weekNumber.Contains("-"))
@@ -98,7 +98,7 @@ namespace schedule
 							}
 						}
 
-						tmp.place = sheet.Cells[i,10].Text;
+						tmp.place = sheet.Cells[i,62].Text;
 
 
 						schedule.Add(tmp);
